@@ -1,17 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import HeroImg from "../../public/assets/hero.png";
 
 export default function Home() {
   return (
@@ -19,7 +9,20 @@ export default function Home() {
       <Head>
         <title>Tarefas+ | Organize suas tarefas de forma fácil</title>
       </Head>
-      <h1>Meu primeiro projeto Next JS</h1>
+      <main className={styles.main}>
+        <div className={styles.logoContent}>
+          <Image
+            src={HeroImg}
+            alt="Logo Tarefas+"
+            priority
+            className={styles.hero}
+          />
+        </div>
+        <h1 className={styles.title}>
+          Sistema feito para você organizar <br />
+          seus estudos e tarefas
+        </h1>
+      </main>
     </>
   );
 }
