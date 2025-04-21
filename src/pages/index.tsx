@@ -5,7 +5,7 @@ import HeroImg from "../../public/assets/hero.png";
 
 export default function Home() {
   return (
-    <>
+    <div className={styles.container}>
       <Head>
         <title>Tarefas+ | Organize suas tarefas de forma fácil</title>
       </Head>
@@ -23,6 +23,6 @@ export default function Home() {
           seus estudos e tarefas
         </h1>
       </main>
-    </>
+    </div>
   );
 }
