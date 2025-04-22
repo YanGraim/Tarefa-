@@ -9,6 +9,7 @@ import { FiShare2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { db } from "@/services/firebaseConnection";
 import { addDoc, collection, query, orderBy, where, onSnapshot } from "firebase/firestore";
+import Link from "next/link";
 
 interface HomeProps {
   user: {
@@ -86,6 +87,11 @@ export default function Dashboard({ user }: HomeProps) {
     }
   }
 
+  async function handleShare(id: string) {
+    await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/tasks/${id}`)
+    toast.success("URL copiada com sucesso")
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -123,13 +129,19 @@ export default function Dashboard({ user }: HomeProps) {
               {item.publica && (
                 <div className={styles.tagContainer}>
                   <label className={styles.tag}>PUBLICA</label>
-                  <button className={styles.shareButton}>
+                  <button className={styles.shareButton} onClick={() => handleShare(item.id)}>
                     <FiShare2 size={20} color="#3183ff" />
                   </button>
                 </div>
               )}
               <div className={styles.taskContent}>
-                <p>{item.tarefa}</p>
+                {item.publica ? (
+                  <Link href={`/tasks/${item.id}`}>
+                    <p>{item.tarefa}</p>
+                  </Link>
+                ) : (
+                  <p>{item.tarefa}</p>
+                )}
                 <button className={styles.trash}>
                   <FaTrash size={24} color="#ea3140" />
                 </button>
