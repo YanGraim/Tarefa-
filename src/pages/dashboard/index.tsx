@@ -3,6 +3,8 @@ import styles from "@/pages/dashboard/Dashboard.module.css";
 import Head from "next/head";
 import { getSession } from "next-auth/react";
 import { TextArea } from "@/components/textarea";
+import { FaTrash } from "react-icons/fa";
+import { FiShare2 } from "react-icons/fi";
 
 export default function Dashboard() {
   return (
@@ -25,6 +27,24 @@ export default function Dashboard() {
             </form>
             <button type="submit" className={styles.button}>Registrar</button>
           </div>
+        </section>
+        <section className={styles.taskContainer}>
+          <h1>Minhas tarefas</h1>
+          <article className={styles.task}>
+            <div className={styles.tagContainer}>
+              <label className={styles.tag}>PUBLICA</label>
+              <button className={styles.shareButton}>
+                <FiShare2 size={20} color="#3183ff" />
+              </button>
+            </div>
+            <div className={styles.taskContent}>
+              <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor, tempora provide
+              </p>
+              <button className={styles.trash}>
+                <FaTrash size={24} color="#ea3140" />
+              </button>
+            </div>
+          </article>
         </section>
       </main>
     </div>
