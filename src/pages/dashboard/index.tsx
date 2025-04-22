@@ -39,6 +39,7 @@ export default function Dashboard({ user }: HomeProps) {
         user: user?.email,
         publica: publicTask
       });
+      toast.success("Tarefa registrada com sucesso")
       setInput("")
       setPublicTask(false)
     } catch (error) {
