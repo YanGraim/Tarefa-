@@ -1,11 +1,14 @@
 import { GetServerSideProps } from "next";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "@/pages/dashboard/Dashboard.module.css";
 import Head from "next/head";
 import { getSession } from "next-auth/react";
 import { TextArea } from "@/components/textarea";
 import { FaTrash } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { db } from "@/services/firebaseConnection";
+import { addDoc, collection } from "firebase/firestore";
 
 export default function Dashboard() {
   const [input, setInput] = useState("")
@@ -15,6 +18,25 @@ export default function Dashboard() {
     setPublicTask(event.target.checked)
   }
 
+  async function handleRegisterTask(event: FormEvent) {
+    event.preventDefault()
+
+    if (!input.trim()) {
+      toast.error("Digite algo válido")
+      return
+    }
+
+    try {
+      await addDoc(collection(db, "tasks"), {
+        tarefa: input,
+        created: new Date(),
+        user: "",
+        publica: publicTask
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -27,7 +49,7 @@ export default function Dashboard() {
           <div className={styles.contentForm}>
             <h1 className={styles.title}>Qual sua tarefa?</h1>
 
-            <form>
+            <form onSubmit={handleRegisterTask}>
               <TextArea
                 placeholder="Digite sua tarefa..."
                 value={input}
@@ -42,8 +64,8 @@ export default function Dashboard() {
                 />
                 <label>Deixar tarefa publica?</label>
               </div>
+              <button type="submit" className={styles.button}>Registrar</button>
             </form>
-            <button type="submit" className={styles.button}>Registrar</button>
           </div>
         </section>
         <section className={styles.taskContainer}>
