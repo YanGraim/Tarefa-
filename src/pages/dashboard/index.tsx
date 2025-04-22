@@ -8,7 +8,7 @@ import { FaTrash } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { db } from "@/services/firebaseConnection";
-import { addDoc, collection, query, orderBy, where, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, query, orderBy, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import Link from "next/link";
 
 interface HomeProps {
@@ -92,6 +92,12 @@ export default function Dashboard({ user }: HomeProps) {
     toast.success("URL copiada com sucesso")
   }
 
+  async function handleDelete(id: string) {
+    const docRef = doc(db, "tasks", id)
+    await deleteDoc(docRef)
+    toast.success("Tarefa deletada com sucesso")
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -142,7 +148,7 @@ export default function Dashboard({ user }: HomeProps) {
                 ) : (
                   <p>{item.tarefa}</p>
                 )}
-                <button className={styles.trash}>
+                <button className={styles.trash} onClick={() => handleDelete(item.id)}>
                   <FaTrash size={24} color="#ea3140" />
                 </button>
               </div>
