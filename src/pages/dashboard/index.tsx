@@ -10,7 +10,13 @@ import toast from "react-hot-toast";
 import { db } from "@/services/firebaseConnection";
 import { addDoc, collection } from "firebase/firestore";
 
-export default function Dashboard() {
+interface HomeProps {
+  user: {
+    email: string;
+  }
+}
+
+export default function Dashboard({ user }: HomeProps) {
   const [input, setInput] = useState("")
   const [publicTask, setPublicTask] = useState(false)
 
