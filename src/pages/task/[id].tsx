@@ -23,6 +23,9 @@ export default function Task({ item }: TaskProps) {
 
             <main className={styles.main}>
                 <h1>Tarefa</h1>
+                <article className={styles.task}>
+                    <p>{item.tarefa}</p>
+                </article>
             </main>
         </div>
     )
