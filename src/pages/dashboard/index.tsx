@@ -38,7 +38,9 @@ export default function Dashboard({ user }: HomeProps) {
         created: new Date(),
         user: user?.email,
         publica: publicTask
-      })
+      });
+      setInput("")
+      setPublicTask(false)
     } catch (error) {
       console.log(error)
     }
