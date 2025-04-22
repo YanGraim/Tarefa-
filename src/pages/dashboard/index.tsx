@@ -36,7 +36,7 @@ export default function Dashboard({ user }: HomeProps) {
       await addDoc(collection(db, "tasks"), {
         tarefa: input,
         created: new Date(),
-        user: "",
+        user: user?.email,
         publica: publicTask
       })
     } catch (error) {
