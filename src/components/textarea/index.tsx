@@ -1,6 +1,6 @@
-import { HTMLProps } from "react"
-import styles from "./TextArea.module.css"
+import { HTMLProps } from "react";
+import styles from "./TextArea.module.css";
 
 export function TextArea({ ...rest }: HTMLProps<HTMLTextAreaElement>) {
-    return <textarea className={styles.textarea} {...rest}></textarea>
+  return <textarea className={styles.textarea} {...rest}></textarea>;
 }

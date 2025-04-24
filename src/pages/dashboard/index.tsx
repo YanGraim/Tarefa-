@@ -8,13 +8,22 @@ import { FaTrash } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { db } from "@/services/firebaseConnection";
-import { addDoc, collection, query, orderBy, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  query,
+  orderBy,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import Link from "next/link";
 
 interface HomeProps {
   user: {
     email: string;
-  }
+  };
 }
 
 interface TaskProps {
@@ -26,9 +35,9 @@ interface TaskProps {
 }
 
 export default function Dashboard({ user }: HomeProps) {
-  const [input, setInput] = useState("")
-  const [publicTask, setPublicTask] = useState(false)
-  const [tasks, setTasks] = useState<TaskProps[]>([])
+  const [input, setInput] = useState("");
+  const [publicTask, setPublicTask] = useState(false);
+  const [tasks, setTasks] = useState<TaskProps[]>([]);
 
   useEffect(() => {
     async function loadTarefas() {
@@ -37,7 +46,7 @@ export default function Dashboard({ user }: HomeProps) {
         tarefasRef,
         orderBy("created", "desc"),
         where("user", "==", user?.email)
-      )
+      );
 
       onSnapshot(q, (snapshot) => {
         const lista = [] as TaskProps[];
@@ -49,27 +58,27 @@ export default function Dashboard({ user }: HomeProps) {
             tarefa,
             created,
             user,
-            publica
-          })
-        })
+            publica,
+          });
+        });
 
-        setTasks(lista)
-      })
+        setTasks(lista);
+      });
     }
 
     loadTarefas();
-  }, [user?.email])
+  }, [user?.email]);
 
   function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
-    setPublicTask(event.target.checked)
+    setPublicTask(event.target.checked);
   }
 
   async function handleRegisterTask(event: FormEvent) {
-    event.preventDefault()
+    event.preventDefault();
 
     if (!input.trim()) {
-      toast.error("Digite algo válido")
-      return
+      toast.error("Digite algo válido");
+      return;
     }
 
     try {
@@ -77,25 +86,27 @@ export default function Dashboard({ user }: HomeProps) {
         tarefa: input,
         created: new Date(),
         user: user?.email,
-        publica: publicTask
+        publica: publicTask,
       });
-      toast.success("Tarefa registrada com sucesso")
-      setInput("")
-      setPublicTask(false)
+      toast.success("Tarefa registrada com sucesso");
+      setInput("");
+      setPublicTask(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   async function handleShare(id: string) {
-    await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/task/${id}`)
-    toast.success("URL copiada com sucesso")
+    await navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_URL}/task/${id}`
+    );
+    toast.success("URL copiada com sucesso");
   }
 
   async function handleDelete(id: string) {
-    const docRef = doc(db, "tasks", id)
-    await deleteDoc(docRef)
-    toast.success("Tarefa deletada com sucesso")
+    const docRef = doc(db, "tasks", id);
+    await deleteDoc(docRef);
+    toast.success("Tarefa deletada com sucesso");
   }
 
   return (
@@ -113,7 +124,9 @@ export default function Dashboard({ user }: HomeProps) {
               <TextArea
                 placeholder="Digite sua tarefa..."
                 value={input}
-                onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setInput(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                  setInput(event.target.value)
+                }
               />
               <div className={styles.checkBoxArea}>
                 <input
@@ -124,7 +137,9 @@ export default function Dashboard({ user }: HomeProps) {
                 />
                 <label>Deixar tarefa publica?</label>
               </div>
-              <button type="submit" className={styles.button}>Registrar</button>
+              <button type="submit" className={styles.button}>
+                Registrar
+              </button>
             </form>
           </div>
         </section>
@@ -135,7 +150,10 @@ export default function Dashboard({ user }: HomeProps) {
               {item.publica && (
                 <div className={styles.tagContainer}>
                   <label className={styles.tag}>PUBLICA</label>
-                  <button className={styles.shareButton} onClick={() => handleShare(item.id)}>
+                  <button
+                    className={styles.shareButton}
+                    onClick={() => handleShare(item.id)}
+                  >
                     <FiShare2 size={20} color="#3183ff" />
                   </button>
                 </div>
@@ -148,7 +166,10 @@ export default function Dashboard({ user }: HomeProps) {
                 ) : (
                   <p>{item.tarefa}</p>
                 )}
-                <button className={styles.trash} onClick={() => handleDelete(item.id)}>
+                <button
+                  className={styles.trash}
+                  onClick={() => handleDelete(item.id)}
+                >
                   <FaTrash size={24} color="#ea3140" />
                 </button>
               </div>
@@ -160,23 +181,22 @@ export default function Dashboard({ user }: HomeProps) {
   );
 }
 
-
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const session = await getSession({ req })
+  const session = await getSession({ req });
   // console.log(session)
   if (!session?.user) {
     return {
       redirect: {
         destination: "/",
         permanent: false,
-      }
-    }
+      },
+    };
   }
   return {
     props: {
       user: {
-        email: session?.user?.email
-      }
-    }
-  }
-}
+        email: session?.user?.email,
+      },
+    },
+  };
+};
