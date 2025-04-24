@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
 import toast from "react-hot-toast";
+import { FaTrash } from "react-icons/fa";
 
 interface TaskProps {
   item: {
@@ -104,6 +105,14 @@ export default function Task({ item, allComments }: TaskProps) {
 
         {comments.map((comment) => (
           <article key={comment.id} className={styles.comment}>
+            <div className={styles.headComments}>
+              <label className={styles.commentsLabel}>{comment.name}</label>
+              {comment.user === session?.user?.email && (
+                <button className={styles.buttonTrash}>
+                  <FaTrash size={18} color="#ea3140" />
+                </button>
+              )}
+            </div>
             <p>{comment.comment}</p>
           </article>
         ))}
