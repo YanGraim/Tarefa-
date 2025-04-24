@@ -24,6 +24,7 @@ interface TaskProps {
     user: string;
     taskId: string;
   };
+  allComments: CommentsProps[];
 }
 
 interface CommentsProps {
@@ -34,9 +35,10 @@ interface CommentsProps {
   comment: string;
 }
 
-export default function Task({ item }: TaskProps) {
+export default function Task({ item, allComments }: TaskProps) {
   const { data: session } = useSession();
   const [input, setInput] = useState("");
+  const [comments, setComments] = useState<CommentsProps[]>(allComments || []);
 
   async function handleComment(event: FormEvent) {
     event.preventDefault();
@@ -92,6 +94,19 @@ export default function Task({ item }: TaskProps) {
             Enviar comentário
           </button>
         </form>
+      </section>
+
+      <section className={styles.commentsContainer}>
+        <h2>Comentários</h2>
+        {comments.length === 0 && (
+          <span>Nenhum comentário foi encontrado...</span>
+        )}
+
+        {comments.map((comment) => (
+          <article key={comment.id} className={styles.comment}>
+            <p>{comment.comment}</p>
+          </article>
+        ))}
       </section>
     </div>
   );
@@ -149,6 +164,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       item: task,
+      allComments: allComments,
     },
   };
 };
