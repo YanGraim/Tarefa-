@@ -11,6 +11,7 @@ import {
   where,
   getDoc,
   addDoc,
+  getDocs,
 } from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
 import toast from "react-hot-toast";
@@ -23,6 +24,14 @@ interface TaskProps {
     user: string;
     taskId: string;
   };
+}
+
+interface CommentsProps {
+  id: string;
+  name: string;
+  user: string;
+  taskId: string;
+  comment: string;
 }
 
 export default function Task({ item }: TaskProps) {
@@ -93,6 +102,19 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const docRef = doc(db, "tasks", id);
   const snapshot = await getDoc(docRef);
+
+  const q = query(collection(db, "comments"), where("taskId", "==", id));
+  const snapshotComments = await getDocs(q);
+  const allComments: CommentsProps[] = [];
+  snapshotComments.forEach((doc) => {
+    allComments.push({
+      id: doc.id,
+      user: doc.data().user,
+      comment: doc.data().comment,
+      name: doc.data().name,
+      taskId: doc.data().taskId,
+    });
+  });
 
   if (snapshot.data() === undefined) {
     return {
