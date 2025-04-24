@@ -1,12 +1,19 @@
 import Head from "next/head";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./Task.module.css";
 import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
-import { doc, collection, query, where, getDoc } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  getDoc,
+  addDoc,
+} from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
-import { truncate } from "fs/promises";
+import toast from "react-hot-toast";
 
 interface TaskProps {
   item: {
@@ -20,6 +27,33 @@ interface TaskProps {
 
 export default function Task({ item }: TaskProps) {
   const { data: session } = useSession();
+  const [input, setInput] = useState("");
+
+  async function handleComment(event: FormEvent) {
+    event.preventDefault();
+    if (!input.trim()) {
+      toast.error("Digite algo válido");
+      return;
+    }
+
+    if (!session?.user?.email || !session?.user?.name) {
+      toast.error("Nome do usuário ou email inválido");
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "comments"), {
+        comment: input,
+        created: new Date(),
+        user: session?.user?.email,
+        name: session?.user?.name,
+        taskId: item?.taskId,
+      });
+      setInput("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -37,8 +71,14 @@ export default function Task({ item }: TaskProps) {
       <section className={styles.commentsContainer}>
         <h2>Deixar comentário</h2>
 
-        <form>
-          <TextArea placeholder="Digite seu comentario" />
+        <form onSubmit={handleComment}>
+          <TextArea
+            placeholder="Digite seu comentario"
+            value={input}
+            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+              setInput(event.target.value)
+            }
+          />
           <button className={styles.button} disabled={!session?.user}>
             Enviar comentário
           </button>
