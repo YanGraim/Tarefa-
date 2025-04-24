@@ -12,6 +12,7 @@ import {
   getDoc,
   addDoc,
   getDocs,
+  deleteDoc,
 } from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
 import toast from "react-hot-toast";
@@ -78,6 +79,19 @@ export default function Task({ item, allComments }: TaskProps) {
     }
   }
 
+  async function handleDelete(id: string) {
+    try {
+      const docRef = doc(db, "comments", id);
+      await deleteDoc(docRef);
+      const deleteComments = comments.filter((comment) => comment.id !== id);
+      setComments(deleteComments);
+      toast.success("Comentário deletado com sucesso");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao deletar");
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -119,7 +133,10 @@ export default function Task({ item, allComments }: TaskProps) {
             <div className={styles.headComments}>
               <label className={styles.commentsLabel}>{comment.name}</label>
               {comment.user === session?.user?.email && (
-                <button className={styles.buttonTrash}>
+                <button
+                  className={styles.buttonTrash}
+                  onClick={() => handleDelete(comment.id)}
+                >
                   <FaTrash size={18} color="#ea3140" />
                 </button>
               )}
