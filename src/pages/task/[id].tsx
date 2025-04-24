@@ -1,9 +1,12 @@
 import Head from "next/head";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 import styles from "./Task.module.css";
 import { GetServerSideProps } from "next";
 import { db } from "@/services/firebaseConnection";
 import { doc, collection, query, where, getDoc } from "firebase/firestore";
 import { TextArea } from "@/components/textarea";
+import { truncate } from "fs/promises";
 
 interface TaskProps {
   item: {
@@ -16,6 +19,8 @@ interface TaskProps {
 }
 
 export default function Task({ item }: TaskProps) {
+  const { data: session } = useSession();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -34,7 +39,9 @@ export default function Task({ item }: TaskProps) {
 
         <form>
           <TextArea placeholder="Digite seu comentario" />
-          <button className={styles.button}>Comentar</button>
+          <button className={styles.button} disabled={!session?.user}>
+            Enviar comentário
+          </button>
         </form>
       </section>
     </div>
